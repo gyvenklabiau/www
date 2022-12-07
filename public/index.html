@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
+    <title>hello</title>
+    <script type="module">
+    var www = {
+
+    }
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"
+
+      if(!dg('cfg')) {
+        var cfg_tekstas = prompt('ikelk configa', '{}')
+        cfg_tekstas ? dso('cfg', cfg_tekstas) : null
+      }
+
+      padegti()
+
+      function padegti() {
+        const cfg = dgo('cfg')
+        const app = initializeApp(cfg)
+      }
+
+      function dso(key, value) {
+        localStorage.setItem(key, JSON.stringify(value))
+      }
+      function dg(key) {
+        return localStorage.getItem(key)
+      }
+      function dgo(key) {
+        return JSON.parse(localStorage.getItem(key))
+      }
+
+    </script>
+  </head>
+  <body>
+    labas
+  </body>
+</html>
