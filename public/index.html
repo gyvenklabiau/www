@@ -1,40 +1,237 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
-    <title>hello</title>
-    <script type="module">
-    var www = {
+<html>
+    <head>
+    	<script type="text/javascript" src="https://unpkg.com/srcsjs@0.0.5/s.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+        <script>
+            const firebaseConfig = {};
+            
+            firebase.initializeApp(firebaseConfig)
 
-    }
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/9.14.0/firebase-app.js"
+            const rtdb = firebase.database()
+            const auth = firebase.auth()
+            const w = rtdb.ref('w')
 
-      if(!dg('cfg')) {
-        var cfg_tekstas = prompt('ikelk configa', '{}')
-        cfg_tekstas ? dso('cfg', cfg_tekstas) : null
-      }
+            w.on('value', update)
+                    
+            function update(data) {
 
-      padegti()
+                const w = data.val()
 
-      function padegti() {
-        const cfg = dgo('cfg')
-        const app = initializeApp(cfg)
-      }
+                qe(q('head'), 'title') ? ih(qe(q('head'), 'title'), w.title) : add(q('head'), ce({e: 'title', t: w.title}))
+                
+                qe(q('head'), '[name=description]') ? ih(qe(q('head'), '[name=description]'), w.description) : add(q('head'), ce({e: 'meta', a: { name: 'description', content: w.description }}))
+                
+                qe(q('head'), '[name="og:description"]') ? ih(qe(q('head'), '[name="og:description"]'), w.og.description) : add(q('head'), ce({e: 'meta', a: { name: 'og:description', content: w.og.description }}))
 
-      function dso(key, value) {
-        localStorage.setItem(key, JSON.stringify(value))
-      }
-      function dg(key) {
-        return localStorage.getItem(key)
-      }
-      function dgo(key) {
-        return JSON.parse(localStorage.getItem(key))
-      }
+                qe(q('head'), '[name="og:image"]') ? a(qe(q('head'), '[name="og:image"]'), 'content', w.og.image) : add(q('head'), ce({e: 'meta', a: { name: 'og:image', content: w.og.image }}))
 
-    </script>
-  </head>
-  <body>
-    labas
-  </body>
+                qe(q('head'), '[name="og:title"]') ? ih(qe(q('head'), '[name="og:title"]'), w.og.title) : add(q('head'), ce({e: 'meta', a: { name: 'og:title', content: w.og.title }}))
+
+                a(e('logotipas'), 'src', w.logo.src )
+
+            }
+
+
+        </script>
+        <meta charset="utf-8">
+
+        <style id="style">
+
+            * {
+                font-family: monospace;
+                margin: 0;
+                padding: 0;
+                font-size: 20px;
+            }
+
+            body { overflow: hidden; }
+
+            main {
+                padding: 2em 1em 5em 1em;
+            }
+
+            .skiltis {
+                max-width: 600px;
+                margin: auto;
+            }
+
+            .skiltis > * {
+                padding: 0.4em;
+            }
+            
+            html {
+                background-color: beige;
+            }
+
+            a {
+                color: #222;
+                font-weight: bold;
+            }
+
+            p {
+                padding-bottom: 1em;
+            }
+
+
+            #navigacija { 
+                user-select:none; 
+                -webkit-user-select: none;
+                background-color: #53748E;
+                color: #fff;
+                padding: 0.5em 1em;
+                max-height: 100vh;
+                overflow: hidden;
+                max-width: 100vw;
+            }
+
+            #eilute {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                background: none;
+            }
+
+            #logotipas {
+                max-height: 8vh;
+                padding: 1vh;
+            }
+
+            #nuoroda {
+                font-size: 1.5em;
+                padding: 0.2em;
+                font-weight: bold;
+                text-transform: uppercase;
+                letter-spacing: 2px;
+            }
+
+            #navigatorius {
+                user-select: none;
+                -webkit-user-select: none;
+                cursor: pointer; 
+                height: 10vh; 
+                padding: auto; 
+                display: flex; 
+                justify-content: center;
+                align-items: center;
+                font-size: 3em;
+                transition: all 500ms ease;
+            }
+
+            .pasukti45 {
+                transform: rotate(45deg);
+            }
+
+            #nuorodos {
+                height: 0vh;
+                width: 100vw;
+                overflow: hidden;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                flex-direction: column;
+                transition: all 500ms ease;
+            }
+
+            .nuoroda {
+                padding: 1em;
+                cursor: pointer;
+                font-size: 1.2em;
+            }
+
+            #google-map > iframe {
+                max-width: 100%;
+                padding: 0;
+            }
+
+            video { max-width: 90vw; }
+
+        </style>
+
+
+    </head>
+
+    <body>
+        <nav id="navigacija">
+            <div id="eilute" onclick="naviguoti()">
+                <div id="vieta-logotipui">
+                    <img id="logotipas" src="logo.svg" alt="Molio Žaidimai">
+                </div>
+                <div id="pavadinimas"></div>
+                <div id="navigatorius">+</div>
+            </div>
+            <div id="nuorodos">
+                <div pavadinimas="galerija" onclick="rodyti(this)">Galerija</div>
+                <div pavadinimas="edukacija" onclick="rodyti(this)">Edukacija</div>
+                <div pavadinimas="ivykiai" onclick="rodyti(this)">Įvykiai</div>
+                <div pavadinimas="apie" onclick="rodyti(this)">Apie Jūratę</div>
+                <div pavadinimas="kontaktai" onclick="rodyti(this)">Kontaktai</div>
+            </div>
+        </nav>
+
+        <main id="skiltys">
+            <div class="skiltis" id="pradzia">
+              nauja pradzia
+          </div>
+            <div class="skiltis" id="kontaktai">
+                <div>
+                    Telefonas: <a href="tel:865412345">865412345</a>
+                </div>
+                <div>
+                    El. paštas: <a href="mailto:mail@gmail.com">mail@gmail.com</a>
+                </div>
+                <div>Adresas: <a href="https://goo.gl/maps/_________" target="blank">Adresas</a></div>
+                <div>Sąskaita: <strong>LT121234123412341234</strong></div>
+                <div id="google-map">
+                  <iframe></iframe>
+                </div>
+            </div>
+        </main>
+
+        <script id="bs">
+
+            var naviguoja = false
+
+            function rodyti(el) {
+                s(q('main'), 'display', 'block')
+                for(page of q('main').children) { s(page, 'display', 'none')}
+                s(e(ga(el, 'pavadinimas')), 'display', 'block')
+                t(e('pavadinimas'), ga(el, 'innerText'))
+                naviguoja = false
+                cr(e('navigatorius'), 'pasukti45')
+                s(e('nuorodos'), 'height', '0')
+                show('skiltys', 'flex')
+            }
+
+            function naviguoti() {
+                if(naviguoja) {
+                    naviguoja = false
+                    s(e('nuorodos'), 'height', '0')
+                    cr(e('navigatorius'), 'pasukti45')
+                    show('skiltys', 'flex')
+                }
+                else {
+                    naviguoja = true
+                    s(e('nuorodos'), 'height', '90vh')
+                    ca(e('navigatorius'), 'pasukti45')
+                    hide('skiltys')
+                }
+            }
+
+            function pridetiNuorodas() {
+                for(nuoroda of e('nuorodos').children) {
+                    a(nuoroda, 'onclick', 'rodyti(this)')
+                }
+            }
+
+            pridetiNuorodas()
+
+            rodyti(q('[pavadinimas=pradzia]')) 
+
+
+        </script>
+    </body>
+
 </html>
