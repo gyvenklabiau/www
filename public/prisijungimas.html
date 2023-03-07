@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Administravimas</title>
+        <script src="https://unpkg.com/srcsjs@0.0.5/s.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-storage-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.15.0/firebase-database-compat.js"></script>
+        <script type="text/javascript">
+            const firebaseConfig = {};
+
+            firebase.initializeApp(firebaseConfig);
+
+            const db = firebase.database()
+            const ref = firebase.storage().ref()
+            const storage = firebase.storage()
+
+            const auth = firebase.auth()
+
+            const w = db.ref('w')
+            
+            var www = {}
+
+            w.on('value', load) 
+
+            function load(data) {
+                www = data.val()
+                console.log(www)
+                t(e('title'), www.title)
+                t(e('description'), www.description)
+                t(e('og-title'), www.og.title)
+                t(e('og-description'), www.og.description)
+                a(e('og-image-preview'), 'src', www.og.image)
+                a(e('logotipas'), 'src', www.logo.src)
+                a(e('logotipas'), 'alt', www.logo.alt)
+
+            }
+
+            // w.update({
+            //     title: '',
+            //     description: '',
+            //     logo: '',
+            //     og: {
+            //         image: '',
+            //         description: '',
+            //         title: ''
+            //     },
+            // })
+
+        </script>
+
+    </head>
+
+    <style>
+
+        * {
+            font-family: monospace;
+            font-size: 20px;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+          -ms-overflow-style: none; 
+          scrollbar-width: none; 
+          overflow-y: scroll; 
+        }
+
+        body::-webkit-scrollbar {
+          display: none; 
+        }
+
+        .fs {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            position: fixed;
+            bottom: 0;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #bbb;
+            color: #222;
+        }
+
+        input {
+            transition: all 500ms ease;
+            margin-top: 0.3em;
+            margin-bottom: 1em;
+            border: 2px solid #444;
+            outline: none;
+            background-color: #ddd;
+            padding: 0.5em;
+            border-radius: 2em;
+        }
+
+        input:hover, input:active, input:focus {
+            border-color: #FD7156;
+        }
+
+        .funkcija { margin-bottom: 1em; }
+
+        button {
+            margin-top: 1em;
+            cursor: pointer;
+            background-color: #53748E;
+            padding: 0.6em 0.6em;
+            border: 2px solid #53748E;
+            transition: all 300ms;
+            border-radius: 2em;
+            transform: scale(1);
+            color: #fff;
+        }
+
+        button:hover {
+            transform: scale(0.9);
+            box-shadow: 0 0 5px 5px;
+        }
+
+        button:active {
+            transform: scale(0.8);
+            box-shadow: 0 0 5px 5px;
+        }
+
+        nav { 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+        }
+
+        main > * {
+            display: none;
+            padding: 1em;
+        }
+
+        #navigacija { 
+            user-select:none; 
+            -webkit-user-select: none;
+            background-color: #222;
+            color: #fff;
+            display: none;
+            overflow: hidden;
+        }
+
+        #navigatorius { 
+            user-select: none;
+            -webkit-user-select: none;
+            cursor: pointer; 
+            height: 10vh; 
+            padding: auto; 
+            display: flex; 
+            justify-content: center;
+            align-items: center;
+            font-size: 3em;
+            transition: all 500ms ease;
+        }
+
+        #nuorodos {
+            height: 0;
+            width: 100vw;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            transition: all 500ms ease;
+        }
+
+        #nuorodos > * {
+            padding: 1em;
+            font-size: 1.3em;
+            cursor: pointer;
+        }
+
+        #nuorodos > *:hover {
+            text-decoration: underline;
+        }
+
+        .pasukti45 { 
+            transform: rotate(45deg);
+        }
+
+    </style>
+
+    <body>
+
+        <div id="prisijungimas" class="fs" style="display: none;">
+            <label>El. paštas</label>
+            <input type="text" name="email" required id="email">
+            <label>Slaptažodis</label>
+            <input type="password" name="password" required id="password">
+            <button class="veiksmas" onclick="jungtis()">Jungtis</button>
+        </div>
+
+        <nav id="navigacija" style="display: none;">
+            <div onclick="naviguoti()" id="navigatorius">
+                +
+            </div>
+            <div id="nuorodos">
+                <div name="informacija" onclick="rodyti(this)">Informacija</div>
+                <div name="spalvos" onclick="rodyti(this)">Spalvos</div>
+            </div>
+        </nav>
+
+        <main id="turinys">
+            <div id="informacija" >
+                <style type="text/css">
+                    label { font-weight: bold; }
+                    [contenteditable="true"] {
+                        padding: 0.4em;
+                        border: 2px solid #444;
+                        margin: 0.2em 0 1.5em 0;
+                        transition: all 200ms ease;
+                    }
+                    [contenteditable="true"]:hover {
+                        padding: 0.4em;
+                        border: 2px solid #222;
+                        margin: 0.2em 0 1.5em 0;
+                    }
+                    .veiksmas {
+                        position: fixed;
+                        bottom: 0;
+                        left: 0;
+                        right: 0;
+                        padding: 1em;
+                        text-align: center;
+                        background-color: #fff;
+                    }
+                    .vaizdas {
+                        max-width: 100%;
+                        overflow: hidden;
+                    }
+
+                    img {
+                        max-width: 100%;
+                    }
+
+                    input[type="file"] {
+                        visibility: hidden;
+                        display: none;
+                    }
+
+                    main {
+                        padding-bottom: 20vh;
+                    }
+
+                    .funkcija {
+                        cursor: pointer;
+                        text-decoration: underline;
+                    }
+
+                </style>
+
+                <label>Logotipas</label>
+                <div class="vaizdas" id="logo">
+                    <img id="logotipas" src="">
+                    <div class="funkcija juoda" onclick="ikeltiLogotipa()">įkelti naują</div>
+                    <input type="file" id="logo-input" onchange="atnaujintiLogotipa()">
+                </div>
+                <script>
+                    function ikeltiLogotipa() {
+                        e('logo-input').click()
+                    }
+
+                    function atnaujintiLogotipa() {
+                        let file = e('logo-input').files[0]
+
+                        ref.child(file.name).put(file).then(snap => {
+                            snap.ref.getDownloadURL().then(url => {
+                                a(e('logotipas'), 'src', url)
+                            })
+                        })
+
+                    }
+                </script>
+
+                <label>Pavadinimas</label>
+                <div id="title" contenteditable="true"></div>
+
+                <label>Aprašymas</label>
+                <div id="description" contenteditable="true"></div>
+
+                <label>OG pavadinimas</label>
+                <div id="og-title" contenteditable="true"></div>
+
+                <label>OG aprašymas</label>
+                <div id="og-description" contenteditable="true"></div>
+
+                <label>OG nuotrauka</label>
+                <div class="vaizdas" id="og-image">
+                    <img id="og-image-preview" src="">
+                    <div class="funkcija juoda" onclick="ikeltiOgNuotrauka()">įkelti naują</div>
+                    <input type="file" id="og-nuotrauka" onchange="atnaujintiOgNuotrauka()">
+                </div>
+                <script>
+                    function ikeltiOgNuotrauka() {
+                        e('og-nuotrauka').click()
+                    }
+
+                    function atnaujintiOgNuotrauka() {
+                        let file = e('og-nuotrauka').files[0]
+
+                        ref.child(file.name).put(file).then(snap => {
+                            snap.ref.getDownloadURL().then(url => {
+                                a(e('og-image-preview'), 'src', url)
+                            })
+                        })
+
+                    }
+                </script>
+
+                <div class="veiksmas"><button id="saugoti" onclick="saugoti()"> saugoti</button></div>
+            </div>
+            <div id="spalvos">
+                <style type="text/css">
+                    #spalvu-palete > div {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-bottom: 2em;
+                    }
+
+                    .blokas {
+                        border: 2px solid #000;
+                        min-height: 5vh;
+                        min-width: 5vh;
+                        margin-left: 1em;
+                        cursor: pointer;
+                    }
+
+                    [type="color"] {
+                        display: none;
+                    }
+
+                    #spalvos-keitiklis {
+                        margin-top: 5em;
+                    }
+
+                    #spalvos-keitiklis > div {
+                        display: flex;
+                        justify-content: center;
+                        align-items: center;
+                        margin-bottom: 2em;
+                    }
+                </style>
+
+                <div id="spalvu-palete">
+                    <div>
+                        <div>balta</div>
+                        <div class="blokas" style="background-color: rgba(255, 255, 255, 1);" onclick="keistiSpalva(p(this))"></div>
+                    </div>
+                    <div>
+                        <div>juoda</div>
+                        <div class="blokas" style="background-color: rgba(0, 0, 0, 1);" onclick="keistiSpalva(p(this))"></div>
+                    </div>
+                    <div>
+                        <div>pilka</div>
+                        <div class="blokas" style="background-color: rgba(127, 127, 127, 1);" onclick="keistiSpalva(p(this))"></div>
+                    </div>
+                    <div>
+                        <div>pagrindine</div>
+                        <div class="blokas" style="background-color: rgba(253, 113, 86, 1);" onclick="keistiSpalva(p(this))"></div>
+                    </div>
+                    <div>
+                        <div>pagalbine</div>
+                        <div class="blokas" style="background-color: rgba(83, 116, 142, 1);" onclick="keistiSpalva(p(this))"></div>
+                    </div>
+                    <div>
+                        <div>fonas</div>
+                        <div class="blokas" style="background-color: rgba(245, 245, 220, 1);" onclick="keistiSpalva(p(this))"></div>
+                    </div>
+                </div>
+                <input id="spalvos-inputas" type="color" name="" oninput="naujaSpalva(event.target.value)">
+                <script>
+                    var spalvos = e('spalvu-palete')
+
+                    var ks = null
+
+                    for(spalva of spalvos.children) {
+                        a(spalva.children[1], 'onclick', 'keistiSpalva(p(this))')
+                    }
+
+                    function pasirinktiSpalva(spalvos_elementas) {
+                        var pav = spalvos_elementas.children[0].innerText
+                        var stilius = ga(spalvos_elementas.children[1], 'style')
+                        var spalvu_pradzia = stilius.split('(')[1]
+                        var spalvos = spalvu_pradzia.split(')')[0].split(', ')
+                        keistiSpalva(spalvos)
+                    }
+
+                    function keistiSpalva(spalvos_elementas) {
+                        ks = spalvos_elementas
+                    }
+
+                    function naujaSpalva(splv) {
+                        s(ks, 'backgroundColor', splv)
+                    }
+                </script>
+            </div>
+        </main>
+    </body>
+
+    <script>
+        var naviguoja = false
+
+        auth.onAuthStateChanged(auth => {
+            if(auth) {
+                rodytiAdministravima()
+            }
+            else {
+                rodytiPrisijungima()
+            }
+        })
+
+        function jungtis() {
+            const prisijungimas = {
+                email: q('[name=email]').value,
+                password: q('[name=password]').value
+            }
+
+            auth.signInWithEmailAndPassword(prisijungimas.email, prisijungimas.password)
+            .then(vartotojas => {
+                administratorius = vartotojas
+                rodytiAdministravima()
+                s(q('#prisijungimas'), 'display', 'none')
+            })
+            .catch(klaida => {
+                if(klaida.code === 'auth/invalid-email') {
+                   notify('Neteisingas el. pašto adresas.') 
+                }
+                else if(klaida.code === 'auth/internal-error') {
+                    notify('Įvyko klaida. Pabandykite iš naujo.')
+                }
+                else if(klaida.code === 'auth/user-not-found') {
+                    notify('Vartotojas nerastas.')
+                }
+                else {
+                    notify(klaida.code)
+                }
+                
+            })
+        }
+
+        function rodytiAdministravima() {
+            s(q('#prisijungimas'), 'display', 'none')
+            s(q('nav'), 'display', 'flex')
+            s(q('main'), 'display', 'block')
+        }
+
+        function rodytiPrisijungima() {
+            s(q('#prisijungimas'), 'display', 'flex')
+        }
+
+        function rodyti(el) {
+            s(q('main'), 'display', 'block')
+            for(page of q('main').children) { s(page, 'display', 'none')}
+            s(e(ga(el, 'name')), 'display', 'block')
+            naviguoja = false
+            cr(e('navigatorius'), 'pasukti45')
+            s(e('nuorodos'), 'height', '0')
+        }
+
+        function naviguoti() {
+            if(naviguoja) {
+                naviguoja = false
+                s(e('nuorodos'), 'height', '0')
+                cr(e('navigatorius'), 'pasukti45')
+                show('turinys')
+            }
+            else {
+                naviguoja = true
+                hide('turinys')
+                s(e('nuorodos'), 'height', '90vh')
+                ca(e('navigatorius'), 'pasukti45')
+            }
+        }
+
+        rodyti(q('[name=spalvos]'))
+
+        function saugoti() {
+            var ww = {
+                title: e('title').innerText,
+                descriptiom: e('description').innerText,
+                og: {
+                    image: ga(e('og-image-preview'), 'src'),
+                    title: e('og-title').innerText,
+                    description: e('og-description').innerText,
+                },
+                logo: {
+                    src: ga(e('logotipas'), 'src')
+                }
+            }
+            s(e('saugoti'), 'transform', 'scale(0.7)')
+            t(e('saugoti'), 'saugoma...')
+            w.update(ww).then(() => {
+                setTimeout(() => {
+                    s(e('saugoti'), 'transform', 'scale(1)')
+                    t(e('saugoti'), 'saugoti')
+                }, 1000)
+            })
+        }
+
+
+
+
+    </script>
+
+</html>
